@@ -3,7 +3,6 @@ public class Projetos
 {
     public String Titulo,Data_inicio,Data_termino,A_financiadora,Objetivo,Descricao,Status;
     public double Valor; 
-    public Colaboradores[] Participantes = new Colaboradores[1000];
 
     public Projetos(String titulo,String data_inicio,String data_termino,String a_financiadora,
     double valor,String objetivo,String descricao)

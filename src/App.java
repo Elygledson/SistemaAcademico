@@ -6,6 +6,7 @@ public class App {
         
         int comando = 0;
         ArrayList<Colaboradores> pessoa = new ArrayList<Colaboradores>();
+        ArrayList<Projetos> projetos = new ArrayList<Projetos>();
         while( comando != 4){
         System.out.println("\nSelecione uma opção:");
         System.out.println("1 - Cadastrar projeto.");
@@ -32,21 +33,22 @@ public class App {
                 var Objetivo = ler.nextLine(); 
                 System.out.println("Descrição:");
                 var Descricao = ler.nextLine(); 
-                Projetos primeiro = new Projetos(titulo,DataInicio,DataTermino,
+                Projetos NovaInstancia = new Projetos(titulo,DataInicio,DataTermino,
                 financiadora,valor,Objetivo,Descricao);
-                primeiro.mostrar();
+                projetos.add(NovaInstancia);
                 break;
             case 2:
                 System.out.println("\nDigite o nome do coloborador:");
                 var nome = ler.nextLine();
+                System.out.println("Digite o seu email:");
+                var email = ler.nextLine(); 
                 System.out.println("Digite o tipo de formação:");
                 var tipo = ler.nextLine(); 
-                Colaboradores colaborador = new Colaboradores(nome,tipo,"");
-                colaborador.Mostrar();
+                Colaboradores colaborador = new Colaboradores(nome,tipo,email);
                 pessoa.add(colaborador);
                 break;
             case 3:
-               /*pessoa.get(0).MostraParticipante();*/
+               Projetos.ListarProjetos(projetos);
                break;
 
             case 4:

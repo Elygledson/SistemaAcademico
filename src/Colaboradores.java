@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Colaboradores {
     public String nome,tipo,email;
     /*projetos que está participando ou participou*/
-    public ArrayList<String> projetos; 
+    public ArrayList<Projetos> projetos; 
     /*publicações feitas*/
     public ArrayList<ProducaoAcademica> producao;
 
@@ -12,7 +12,7 @@ public class Colaboradores {
         this.nome = nome;
         this.tipo = tipo;
         this.email = email;
-        this.projetos= new ArrayList<String>();
+        this.projetos= new ArrayList<Projetos>();
         this.producao = new ArrayList<ProducaoAcademica>();
     }
     public void Mostrar()
@@ -21,6 +21,6 @@ public class Colaboradores {
     }
     public void AdicionarProjetos(String NomedoProjeto)
     {
-        this.projetos.add(NomedoProjeto);
+        
     }
 }

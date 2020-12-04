@@ -6,6 +6,7 @@ public class Projetos
     public double Valor; 
     public int q_professor; /*Quantidade de professores associados*/
     public ArrayList<Colaboradores> participantes; 
+    public ArrayList<ProducaoAcademica> producao; /*publicações ou orientações associadas ao projeto*/
 
     public Projetos(String titulo,String DataInicio,String DataTermino,
     String a_financiadora,double valor,String objetivo,String descricao)
@@ -26,6 +27,10 @@ public class Projetos
         verificar se já está no grupo caso esteja pois não é permitido está alocando em mais de dois grupos
         */
         /*true para em fase de elaboração*/
+        var tipo = this.pessoa.tipo.toUpperCase();
+        if(tipo == "PROFESSOR"){
+            this.q_professor
+        }
     
     }
     public void Verificar(String nome)
@@ -36,7 +41,14 @@ public class Projetos
     {
       
     }
-    public void mostrar(){
-        System.out.printf("%s\n%s\n%s\n%s\n%.2f", this.Titulo,this.DataInicio,this.DataTermino,this.A_financiadora,this.Valor);
+    static void ListarProjetos(ArrayList<Projetos> projetos)
+    {
+        System.out.println("Selecione um projeto abaixo:\n");
+        for(int i = 1;i <= projetos.size();i++)
+        {
+            System.out.println("Informações do projeto:");
+            System.out.printf("%d - %s | %s | %s | %s | %.2f |\n",i,projetos.get(i).Titulo,projetos.get(i).DataInicio,
+            projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor,projetos.get(i).Objetivo,projetos.get(i).Descricao);
+        }
     }
 }

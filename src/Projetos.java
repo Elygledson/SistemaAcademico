@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Projetos 
 {
@@ -7,6 +8,7 @@ public class Projetos
     public int q_professor; /*Quantidade de professores associados*/
     public ArrayList<Colaboradores> participantes; 
     public ArrayList<ProducaoAcademica> producao; /*publicações ou orientações associadas ao projeto*/
+    static Scanner input = new Scanner(System.in);
 
     public Projetos(String titulo,String DataInicio,String DataTermino,
     String a_financiadora,double valor,String objetivo,String descricao)
@@ -20,6 +22,7 @@ public class Projetos
         this.Descricao = descricao;
         this.participantes = new ArrayList<Colaboradores>();
     }
+
     public void Alocar(Colaboradores pessoa)
     {
         /*somente permitido se estiver em "elaboração";
@@ -31,22 +34,45 @@ public class Projetos
        System.out.println(tipo);
     
     }
+
     public void Verificar(String nome)
     {
         
     }
+
     public void AlterarStatus()
     {
       
     }
-    static void ListarProjetos(ArrayList<Projetos> projetos)
+
+    public static void ListarProjetos(ArrayList<Projetos> projetos)
     {
         System.out.println("Selecione um projeto abaixo:\n");
-        for(int i = 1;i <= projetos.size();i++)
+        for(int i = 0;i < projetos.size();i++)
         {
             System.out.println("Informações do projeto:");
-            System.out.printf("[%d] - %s | %s | %s | %s | %.2f |\n",i,projetos.get(i).Titulo,projetos.get(i).DataInicio,
-            projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor,projetos.get(i).Objetivo,projetos.get(i).Descricao);
+            System.out.printf("[OPÇÃO]\n[%d] - [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",i + 1,projetos.get(i).Titulo,projetos.get(i).DataInicio,
+            projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor);
+            System.out.printf("[%d] - [DESCRIÇÃO]\n      %s\n[%d] - [OBJETIVO]  \n      %s \n",i+1,projetos.get(i).Descricao,i+1,projetos.get(i).Objetivo);
         }
+    }
+    static Projetos CadastrarProjeto()
+    {
+        System.out.println("\nDigite o título:");
+        var Titulo = input.nextLine();
+        System.out.println("Digite a data de início:");
+        var DataInicio =  input.nextLine();
+        System.out.println("Digite a data de termino:");
+        var DataTermino = input.nextLine();
+        System.out.println("Digite o agente financiador:");
+        var A_financiadora = input.nextLine();
+        System.out.println("Digite o valor:");
+        var Valor = Double.parseDouble(input.nextLine());
+        System.out.println("Digite o objetivo:");
+        var Objetivo = input.nextLine();
+        System.out.println("Digite a descrição:");
+        var Descricao = input.nextLine();
+        Projetos Instance = new Projetos(Titulo,DataInicio,DataTermino,A_financiadora,Valor,Objetivo,Descricao);
+        return  Instance;
     }
 }

@@ -14,4 +14,9 @@ public class ProducaoAcademica {
         this.Tipo  = tipo;
         this.Autores = new ArrayList<Colaboradores>();
     }
+
+    static void CadastrarProducao()
+    {
+        
+    }
 }

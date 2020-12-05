@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Colaboradores {
@@ -6,14 +7,18 @@ public class Colaboradores {
     public ArrayList<Projetos> projetos; 
     /*publicações feitas*/
     public ArrayList<ProducaoAcademica> producao;
-
-    public Colaboradores(String nome,String tipo,String email)
+    public static Scanner write = new Scanner(System.in);
+    static void AdicionarColaborador()
     {
-        this.nome = nome;
-        this.tipo = tipo;
-        this.email = email;
-        this.projetos= new ArrayList<Projetos>();
-        this.producao = new ArrayList<ProducaoAcademica>();
+        System.out.println("\nDigite o nome do colaborador:");
+        var nome = write.nextLine();
+        System.out.println("Digite o seu email:");
+        var email = write.nextLine(); 
+        System.out.println("Digite o tipo de colaborador:");
+        var get = write.nextLine();
+        var tipo = get.toUpperCase();
+        System.out.printf("%s\n",tipo);  
+        write.close();      
     }
     public void Mostrar()
     {

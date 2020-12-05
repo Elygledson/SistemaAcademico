@@ -27,10 +27,8 @@ public class Projetos
         verificar se já está no grupo caso esteja pois não é permitido está alocando em mais de dois grupos
         */
         /*true para em fase de elaboração*/
-        var tipo = this.pessoa.tipo.toUpperCase();
-        if(tipo == "PROFESSOR"){
-            this.q_professor
-        }
+        var tipo = pessoa.tipo.toUpperCase();
+       System.out.println(tipo);
     
     }
     public void Verificar(String nome)
@@ -47,7 +45,7 @@ public class Projetos
         for(int i = 1;i <= projetos.size();i++)
         {
             System.out.println("Informações do projeto:");
-            System.out.printf("%d - %s | %s | %s | %s | %.2f |\n",i,projetos.get(i).Titulo,projetos.get(i).DataInicio,
+            System.out.printf("[%d] - %s | %s | %s | %s | %.2f |\n",i,projetos.get(i).Titulo,projetos.get(i).DataInicio,
             projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor,projetos.get(i).Objetivo,projetos.get(i).Descricao);
         }
     }

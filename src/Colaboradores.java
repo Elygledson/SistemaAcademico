@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Colaboradores {
     public String nome,tipo,email,grau;
+
+    private Integer SecretCode;
     /*projetos que está participando ou participou*/
     public ArrayList<Projetos> projetos; 
     /*publicações feitas*/
@@ -11,11 +13,12 @@ public class Colaboradores {
 
     public static Scanner input = new Scanner(System.in);
 
-    public Colaboradores(String nome,String tipo,String email,String grau){
+    public Colaboradores(String nome,String tipo,String email,String grau,Integer SecretCode){
         this.nome = nome;
         this.tipo = tipo;
         this.grau = grau;
         this.email = email;
+        this.SecretCode = SecretCode;
         this.projetos= new ArrayList<Projetos>();
         this.producao = new ArrayList<ProducaoAcademica>();
     }
@@ -23,6 +26,11 @@ public class Colaboradores {
     public String getNome()
     {
         return this.nome;
+    }   
+    
+    private Integer getSecretCode()
+    {
+        return this.SecretCode;
     }
     
     public String getEmail()
@@ -30,7 +38,7 @@ public class Colaboradores {
         return this.email;
     }
 
-    public static boolean Verificar(String email,ArrayList<Colaboradores> colaboradores)
+    public static boolean VerificarEmail(String email,ArrayList<Colaboradores> colaboradores)
     {
         for (int i = 0;i < colaboradores.size();i++) {
             if(email.equals(colaboradores.get(i).email)){
@@ -50,10 +58,14 @@ public class Colaboradores {
 
         var email = input.nextLine(); 
 
+        System.out.println("Digite um código secreto:\nAviso: deve conter apenas números inteiros");
+
+        var SecretCode = Integer.parseInt(input.nextLine()); 
+
         var flag = true; 
 
         while(flag){
-            if(!Colaboradores.Verificar(email,colaboradores)){
+            if(!Colaboradores.VerificarEmail(email,colaboradores)){
                 flag = false;
             }
             else{
@@ -76,16 +88,16 @@ public class Colaboradores {
         while(flag){
         switch(getInput){
             case 1:
-                Professor professor = new Professor(nome,"PROFESSOR","CAMPO NÂO ESPECIFICADO",email);
+                Professor professor = new Professor(nome,"PROFESSOR",email,"CAMPO NÂO ESPECIFICADO",SecretCode);
                 flag = false;
                 return professor;
             case 2:
-                Pesquisador pesquisador = new Pesquisador(nome,"PESQUISADOR","CAMPO NÂO ESPECIFICADO",email);
+                Pesquisador pesquisador = new Pesquisador(nome,"PESQUISADOR",email,"CAMPO NÂO ESPECIFICADO",SecretCode);
                 flag = false;
                 return pesquisador;
             case 3:
                 var grau = Aluno.SetTipo();
-                Aluno aluno = new Aluno(nome,"ALUNO",grau,email);
+                Aluno aluno = new Aluno(nome,"ALUNO",email,grau,SecretCode);
                 flag = false;
                 return aluno;
             default:
@@ -101,8 +113,11 @@ public class Colaboradores {
 
     public void AddProjeto(ArrayList<Projetos> ProjCadastrados,Colaboradores colaborador)
     {
+        if(ProjCadastrados.size() == 0){
+            System.out.println("\nNenhum projeto cadastrado!\n");
+            return;
+        }
         Projetos.ListarProjetos(ProjCadastrados);
-        System.out.println("\nSelecione o projeto:");
         var getInput = Integer.parseInt(input.nextLine());
         System.out.printf("Projeto selecionado [%d]\n",getInput);
 
@@ -118,7 +133,7 @@ public class Colaboradores {
 
         if(colaborador.grau.equals("GRADUAÇÂO"))
         {
-            if(colaborador.projetos.size() < 2)
+            if(colaborador.projetos.size() < 2 && ProjCadastrados.get(getInput - 1).Status.equals("EM ELABORAÇÃO"))
             {
                 this.projetos.add(ProjCadastrados.get(getInput - 1));
                 ProjCadastrados.get(getInput - 1).participantes.add(colaborador);
@@ -132,6 +147,7 @@ public class Colaboradores {
         }
         else{
             this.projetos.add(ProjCadastrados.get(getInput - 1));
+            ProjCadastrados.get(getInput - 1).participantes.add(colaborador);
             System.out.println("Colaborador(a) associado ao projeto!");
         }
     }
@@ -139,9 +155,13 @@ public class Colaboradores {
 
     public static void BuscarColaborador(ArrayList<Projetos> ProjCadastrados,ArrayList<Colaboradores> colaboradores)
     {
-        System.out.println("\nDigite o nome do colaborador");
+        System.out.println("\nDigite o email do colaborador\n");
 
         var n = input.nextLine();
+
+        System.out.println("\nDigite o seu código secreto\n");
+
+        var SecretCode = Integer.parseInt(input.nextLine());
 
         if(colaboradores.isEmpty()){
             System.out.println("Ainda não há colaboradores cadastrados!");
@@ -150,14 +170,15 @@ public class Colaboradores {
 
         for(int i = 0;i < colaboradores.size();i++)
         {
-            String nome = colaboradores.get(i).getNome();
-            if(n.equals(nome)) 
+            Integer code = colaboradores.get(i).getSecretCode();
+            String email = colaboradores.get(i).getEmail();
+            if(SecretCode == code && n.equals(email)) 
             {
                 colaboradores.get(i).AddProjeto(ProjCadastrados,colaboradores.get(i));
                 return;
             }
         }
-        System.out.printf(" '%s' não está cadastrado no sistema.\n",n);
+        System.out.printf("O email ''%s'' não está cadastrado no sistema.\n",n);
     }
 
     public static void ListarColaboradores(ArrayList<Colaboradores> colaboradores)
@@ -172,10 +193,10 @@ public class Colaboradores {
         {
 
             System.out.println("\nDados do colaborador:\n");
-            System.out.printf("[NOME]  ->%s \n[EMAIL] ->%s \n[TIPO]  ->[%s|%s]\n",colaboradores.get(i).nome,colaboradores.get(i).email,colaboradores.get(i).tipo,colaboradores.get(i).grau);
+            System.out.printf("[NOME]  ->%s \n[TIPO]  ->[%s|%s]\n",colaboradores.get(i).nome,colaboradores.get(i).tipo,colaboradores.get(i).grau);
            
             if(colaboradores.get(i).projetos.isEmpty()){ 
-                System.out.printf("AVISO: No momento  '%s' não está participando de nenhum projeto.\n",colaboradores.get(i).nome); continue;
+                System.out.printf("AVISO: No momento  ''%s'' não está participando de nenhum projeto.\n",colaboradores.get(i).nome); continue;
             }
 
             System.out.println("Participando dos projetos:");

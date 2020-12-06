@@ -6,9 +6,9 @@ public class Aluno extends Colaboradores{
     public static Scanner input = new Scanner(System.in);
     public String grau;
 
-    public Aluno(String nome,String tipo,String grau,String email)
+    public Aluno(String nome,String tipo, String email, String grau,Integer SecretCode)
     {
-        super(nome, tipo, email, grau);
+        super(nome, tipo, email, grau, SecretCode);
     }
     public String GetTipo()
     {

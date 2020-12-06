@@ -9,15 +9,14 @@ public class Admin {
         ArrayList<Colaboradores> colaboradores = new ArrayList<Colaboradores>();
         ArrayList<Projetos> projetos = new ArrayList<Projetos>();
 
-        while(comando != 7){
+        while(comando != 6){
         System.out.println("\nSelecione uma opção:");
         System.out.println("[1] - Cadastrar projeto.");
         System.out.println("[2] - Cadastrar participante.");
-        System.out.println("[3] - Cadastrar e associar publicação a um projeto.");
-        System.out.println("[4] - Alocar participante a projeto.");
-        System.out.println("[5] - Projetos disponíveis");
-        System.out.println("[6] - Colaboradores cadastrados");
-        System.out.println("[7] - Sair.\n");
+        System.out.println("[3] - Alocar participante a projeto.");
+        System.out.println("[4] - Projetos disponíveis");
+        System.out.println("[5] - Colaboradores cadastrados");
+        System.out.println("[6] - Sair.\n");
         comando = input.nextInt();
         System.out.printf("Opção [%d]\n",comando);
         switch (comando){
@@ -26,21 +25,19 @@ public class Admin {
                 System.out.println("\nProjeto adicionado!");
                 break;
             case 2:
-                colaboradores.add(Colaboradores.AdicionarColaborador());
-                System.out.println("\nColaborador adicionado!");
+                colaboradores.add(Colaboradores.AdicionarColaborador(colaboradores));
+                System.out.println("\nColaborador(a) adicionado!");
                 break;
             case 3:
-               break;
-            case 4:
                Colaboradores.BuscarColaborador(projetos,colaboradores);
                break;
-            case 5:
+            case 4:
                 Projetos.ListarProjetos(projetos);
                break;
-            case 6:
+            case 5:
                 Colaboradores.ListarColaboradores(colaboradores);
                break;
-            case 7:
+            case 6:
                break;
         
     }

@@ -1,62 +1,136 @@
 import java.util.Scanner;
+
 import java.util.ArrayList;
 
 public class Colaboradores {
-    public String nome,tipo,email;
+    public String nome,tipo,email,grau;
     /*projetos que está participando ou participou*/
     public ArrayList<Projetos> projetos; 
     /*publicações feitas*/
     public ArrayList<ProducaoAcademica> producao;
     public static Scanner input = new Scanner(System.in);
 
-    public Colaboradores(String nome,String tipo,String email){
+    public Colaboradores(String nome,String tipo,String email,String grau){
         this.nome = nome;
         this.tipo = tipo;
+        this.grau = grau;
         this.email = email;
         this.projetos= new ArrayList<Projetos>();
         this.producao = new ArrayList<ProducaoAcademica>();
-    }
-
-    public static Colaboradores AdicionarColaborador()
-    {
-        System.out.println("\nDigite o nome do colaborador:");
-        var nome = input.nextLine();
-        System.out.println("Digite o seu email:");
-        var email = input.nextLine(); 
-        System.out.println("Digite o tipo de colaborador:\n");
-        System.out.println("1 - Professor");
-        System.out.println("2 - Pesquisador");
-        System.out.println("3 - Aluno\n");
-        var getInput = input.nextInt();
-        System.out.printf("Opção [%d]\n",getInput);   
-        switch(getInput){
-            case 1:
-                Aluno aluno = new Aluno(nome,"ALUNO",email);
-                aluno.SelecioneTipo(input);
-                return aluno;
-            case 2:
-                Professor professor = new Professor(nome,"PROFESSOR",email);
-                return professor;
-            case 3:
-                Pesquisador pesquisador = new Pesquisador(nome,"PESQUISADOR",email);
-                return pesquisador;
-        }
-    }
-
-
-    public void AddProjeto(ArrayList<Projetos> ProjCadastrados)
-    {
-        Projetos.ListarProjetos(ProjCadastrados);
-        System.out.println("Selecione o projeto:");
-        var get = Integer.parseInt(input.nextLine());
-        System.out.printf("Projeto selecionado [%d]\n",get);
-        this.projetos.add(ProjCadastrados.get(get - 1));
     }
 
     public String getNome()
     {
         return this.nome;
     }
+    
+    public String getEmail()
+    {
+        return this.email;
+    }
+
+    public static boolean Verificar(String email,ArrayList<Colaboradores> colaboradores)
+    {
+        for (int i = 0;i < colaboradores.size();i++) {
+            if(email.equals(colaboradores.get(i).email)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Colaboradores AdicionarColaborador(ArrayList<Colaboradores> colaboradores)
+    {
+        System.out.println("\nDigite o nome do colaborador:");
+
+        var nome = input.nextLine();
+
+        System.out.println("Digite o seu email:");
+
+        var email = input.nextLine(); 
+
+        var flag = true; 
+
+        while(flag){
+            if(!Colaboradores.Verificar(email,colaboradores)){
+                flag = false;
+            }
+            else{
+                System.out.println("Esse email já existe no sistema!Por favor,digite outro email.");
+                email = input.nextLine(); 
+            }
+        }
+
+        System.out.println("\nDigite o tipo de colaborador:\n");
+        System.out.println("[1] - Professor");
+        System.out.println("[2] - Pesquisador");
+        System.out.println("[3] - Aluno\n");
+
+        var getInput = Integer.parseInt(input.nextLine());
+
+        System.out.printf("Opção [%d]\n",getInput); 
+
+        flag = true; 
+
+        while(flag){
+        switch(getInput){
+            case 1:
+                Professor professor = new Professor(nome,"PROFESSOR","CAMPO NÂO ESPECIFICADO",email);
+                flag = false;
+                return professor;
+            case 2:
+                Pesquisador pesquisador = new Pesquisador(nome,"PESQUISADOR","CAMPO NÂO ESPECIFICADO",email);
+                flag = false;
+                return pesquisador;
+            case 3:
+                var grau = Aluno.SetTipo();
+                Aluno aluno = new Aluno(nome,"ALUNO",grau,email);
+                flag = false;
+                return aluno;
+            default:
+                System.out.println("Opção inválida!Tente novamente.");
+                getInput = Integer.parseInt(input.nextLine());
+                break;
+        }
+    }
+    input.close();
+    return null;
+    }
+
+
+    public void AddProjeto(ArrayList<Projetos> ProjCadastrados,Colaboradores colaborador)
+    {
+        Projetos.ListarProjetos(ProjCadastrados);
+        System.out.println("\nSelecione o projeto:");
+        var getInput = Integer.parseInt(input.nextLine());
+        System.out.printf("Projeto selecionado [%d]\n",getInput);
+
+        while(getInput > ProjCadastrados.size() || getInput <= 0){
+                System.out.println("Opção inválida!Tente novamente.");
+                getInput = Integer.parseInt(input.nextLine());
+            }
+
+        if(colaborador.grau.equals("GRADUAÇÂO"))
+        {
+            if(colaborador.projetos.get(getInput - 1).Titulo.equalsIgnoreCase(ProjCadastrados.get(getInput - 1).Titulo)){
+               System.out.println("Você já está participando desse projeto!");
+               return;
+            }
+
+            else if(colaborador.projetos.size() < 2)
+            {
+                this.projetos.add(ProjCadastrados.get(getInput - 1));
+                return;
+            }
+            else{
+              System.out.println("De acordo com as regras do sistema: alunos de graduação não pode está em mais de dois projetos!");
+              return;
+            }
+        }
+
+        this.projetos.add(ProjCadastrados.get(getInput - 1));
+    }
+
 
     public static void BuscarColaborador(ArrayList<Projetos> ProjCadastrados,ArrayList<Colaboradores> colaboradores)
     {
@@ -74,11 +148,11 @@ public class Colaboradores {
             String nome = colaboradores.get(i).getNome();
             if(n.equals(nome)) 
             {
-                colaboradores.get(i).AddProjeto(ProjCadastrados);
+                colaboradores.get(i).AddProjeto(ProjCadastrados,colaboradores.get(i));
                 return;
             }
         }
-        System.out.printf("O colaborador '%s' não está cadastrado no sistema.\n",n);
+        System.out.printf(" '%s' não está cadastrado no sistema.\n",n);
     }
 
     public static void ListarColaboradores(ArrayList<Colaboradores> colaboradores)
@@ -91,18 +165,22 @@ public class Colaboradores {
 
         for(int i = 0;i < colaboradores.size();i++)
         {
+
             System.out.println("\nDados do colaborador:\n");
-            System.out.printf("[NOME]  ->%s \n[EMAIL] ->%s \n",colaboradores.get(i).nome,colaboradores.get(i).email);
+            System.out.printf("[NOME]  ->%s \n[EMAIL] ->%s \n[TIPO]  ->[%s|%s]\n",colaboradores.get(i).nome,colaboradores.get(i).email,colaboradores.get(i).tipo,colaboradores.get(i).grau);
+           
             if(colaboradores.get(i).projetos.isEmpty()){ 
                 System.out.printf("AVISO: No momento  '%s' não está participando de nenhum projeto.\n",colaboradores.get(i).nome); continue;
             }
+
             System.out.println("Participando dos projetos:");
             for(int j = 0; j < colaboradores.get(i).projetos.size(); j++){
                 
-                System.out.printf("[%d] [TITULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADOR] -> %s [VALOR] -> %.2f\n",j + 1,
+                System.out.printf("[%d] [TITULO] -> %s \n  [DATA INÍCIO] -> %s [DATA TERMINO] -> %s \n  [FINANCIADOR] -> %s \n  [VALOR] -> %.2f\n",j + 1,
                 colaboradores.get(i).projetos.get(j).Titulo,colaboradores.get(i).projetos.get(j).DataInicio,colaboradores.get(i).projetos.get(j).DataTermino,
                 colaboradores.get(i).projetos.get(j).A_financiadora,colaboradores.get(i).projetos.get(j).Valor);
             }
+
         }
     }
 }

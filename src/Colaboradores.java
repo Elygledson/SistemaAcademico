@@ -8,6 +8,7 @@ public class Colaboradores {
     public ArrayList<Projetos> projetos; 
     /*publicações feitas*/
     public ArrayList<ProducaoAcademica> producao;
+
     public static Scanner input = new Scanner(System.in);
 
     public Colaboradores(String nome,String tipo,String email,String grau){
@@ -110,25 +111,29 @@ public class Colaboradores {
                 getInput = Integer.parseInt(input.nextLine());
             }
 
+        if(Projetos.Verificacao(colaborador,ProjCadastrados.get(getInput - 1).Titulo)){
+            System.out.println("Erro: você já está participando desse projeto!\n");
+            return;
+        }
+
         if(colaborador.grau.equals("GRADUAÇÂO"))
         {
-            if(colaborador.projetos.get(getInput - 1).Titulo.equalsIgnoreCase(ProjCadastrados.get(getInput - 1).Titulo)){
-               System.out.println("Você já está participando desse projeto!");
-               return;
-            }
-
-            else if(colaborador.projetos.size() < 2)
+            if(colaborador.projetos.size() < 2)
             {
                 this.projetos.add(ProjCadastrados.get(getInput - 1));
+                ProjCadastrados.get(getInput - 1).participantes.add(colaborador);
+                System.out.println("Colaborador(a) associado ao projeto!");
                 return;
             }
             else{
-              System.out.println("De acordo com as regras do sistema: alunos de graduação não pode está em mais de dois projetos!");
+              System.out.println("De acordo com as regras do sistema: alunos de graduação não pode está em mais de dois projetos.");
               return;
             }
         }
-
-        this.projetos.add(ProjCadastrados.get(getInput - 1));
+        else{
+            this.projetos.add(ProjCadastrados.get(getInput - 1));
+            System.out.println("Colaborador(a) associado ao projeto!");
+        }
     }
 
 
@@ -176,7 +181,7 @@ public class Colaboradores {
             System.out.println("Participando dos projetos:");
             for(int j = 0; j < colaboradores.get(i).projetos.size(); j++){
                 
-                System.out.printf("[%d] [TITULO] -> %s \n  [DATA INÍCIO] -> %s [DATA TERMINO] -> %s \n  [FINANCIADOR] -> %s \n  [VALOR] -> %.2f\n",j + 1,
+                System.out.printf("[%d] [TITULO] -> %s \n  [DATA INÍCIO] -> %s [DATA TERMINO] -> %s \n  [FINANCIADOR] -> %s \n  [VALOR] ->R$ %.2f\n",j + 1,
                 colaboradores.get(i).projetos.get(j).Titulo,colaboradores.get(i).projetos.get(j).DataInicio,colaboradores.get(i).projetos.get(j).DataTermino,
                 colaboradores.get(i).projetos.get(j).A_financiadora,colaboradores.get(i).projetos.get(j).Valor);
             }

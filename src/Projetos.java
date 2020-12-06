@@ -35,9 +35,16 @@ public class Projetos
     
     }
 
-    public void Verificar(String nome)
+    public static boolean Verificacao(Colaboradores colaborador,String Titulo)
     {
-        
+        for(int i = 0;i < colaborador.projetos.size();i++)
+        {
+            if(colaborador.projetos.get(i).Titulo.equals(Titulo))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void AlterarStatus()

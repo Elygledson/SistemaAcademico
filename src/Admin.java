@@ -9,6 +9,8 @@ public class Admin {
 
         Scanner input = new Scanner(System.in);
 
+        Sistema sistema = new Sistema();
+
         ArrayList<Colaboradores> colaboradores = new ArrayList<Colaboradores>();
 
         ArrayList<Projetos> projetos = new ArrayList<Projetos>();
@@ -17,32 +19,41 @@ public class Admin {
         System.out.println("[1] - Cadastrar projeto.");
         System.out.println("[2] - Cadastrar participante.");
         System.out.println("[3] - Alocar participante a projeto.");
-        System.out.println("[4] - Projetos disponíveis");
-        System.out.println("[5] - Alterar status de projeto");
-        System.out.println("[6] - Colaboradores cadastrados");
+        System.out.println("[4] - Alterar status de projeto");
+        System.out.println("[5] - Consultar projeto");
+        System.out.println("[6] - Consultar colaborador");
         System.out.println("[7] - Sair.\n");
-        var comando = input.nextInt();
+        var comando = Integer.parseInt(input.nextLine());
+        int index,getResponse;
         System.out.printf("Opção [%d]\n",comando);
         switch (comando){
             case 1:
-                projetos.add(Projetos.CadastrarProjeto());
+                projetos.add(Sistema.CadastrarProjeto());
                 System.out.println("\nProjeto adicionado!");
                 break;
             case 2:
-                colaboradores.add(Colaboradores.AdicionarColaborador(colaboradores));
+                colaboradores.add(Sistema.AdicionarColaborador(colaboradores));
                 System.out.println("\nColaborador(a) adicionado!");
                 break;
             case 3:
-               Colaboradores.BuscarColaborador(projetos,colaboradores);
-               break;
+                 index = Sistema.BuscarColaborador(colaboradores);
+                if(index == -1)break;
+                colaboradores.get(index).AddProjeto(projetos,colaboradores.get(index));
+                break;
             case 4:
-                Projetos.ListarProjetos(projetos);
+                getResponse = Sistema.BuscarProjeto(projetos);
+                if(getResponse == -1)break;
+                projetos.get(getResponse - 1).setStatus();
                break;
             case 5:
-                Projetos.setStatus(projetos);
-               break;
+                index = Sistema.BuscarProjeto(projetos);
+                if(index == -1)break;
+                projetos.get(index - 1).ListarProjeto();
+                break;
             case 6:
-                Colaboradores.ListarColaboradores(colaboradores);
+                index = Sistema.BuscarColaborador(colaboradores);
+                if(index == -1)break;
+                colaboradores.get(index).ListarColaborador();
                 break;
             case 7:
                 flag = false;

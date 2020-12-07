@@ -28,7 +28,7 @@ public class Colaboradores {
         return this.nome;
     }   
     
-    private Integer getSecretCode()
+    public Integer getSecretCode()
     {
         return this.SecretCode;
     }
@@ -48,68 +48,6 @@ public class Colaboradores {
         return false;
     }
 
-    public static Colaboradores AdicionarColaborador(ArrayList<Colaboradores> colaboradores)
-    {
-        System.out.println("\nDigite o nome do colaborador:");
-
-        var nome = input.nextLine();
-
-        System.out.println("Digite o seu email:");
-
-        var email = input.nextLine(); 
-
-        System.out.println("Digite um código secreto:\nAviso: deve conter apenas números inteiros");
-
-        var SecretCode = Integer.parseInt(input.nextLine()); 
-
-        var flag = true; 
-
-        while(flag){
-            if(!Colaboradores.VerificarEmail(email,colaboradores)){
-                flag = false;
-            }
-            else{
-                System.out.println("Esse email já existe no sistema!Por favor,digite outro email.");
-                email = input.nextLine(); 
-            }
-        }
-
-        System.out.println("\nDigite o tipo de colaborador:\n");
-        System.out.println("[1] - Professor");
-        System.out.println("[2] - Pesquisador");
-        System.out.println("[3] - Aluno\n");
-
-        var getInput = Integer.parseInt(input.nextLine());
-
-        System.out.printf("Opção [%d]\n",getInput); 
-
-        flag = true; 
-
-        while(flag){
-        switch(getInput){
-            case 1:
-                Professor professor = new Professor(nome,"PROFESSOR",email,"CAMPO NÂO ESPECIFICADO",SecretCode);
-                flag = false;
-                return professor;
-            case 2:
-                Pesquisador pesquisador = new Pesquisador(nome,"PESQUISADOR",email,"CAMPO NÂO ESPECIFICADO",SecretCode);
-                flag = false;
-                return pesquisador;
-            case 3:
-                var grau = Aluno.SetTipo();
-                Aluno aluno = new Aluno(nome,"ALUNO",email,grau,SecretCode);
-                flag = false;
-                return aluno;
-            default:
-                System.out.println("Opção inválida!Tente novamente.");
-                getInput = Integer.parseInt(input.nextLine());
-                break;
-        }
-    }
-    input.close();
-    return null;
-    }
-
 
     public void AddProjeto(ArrayList<Projetos> ProjCadastrados,Colaboradores colaborador)
     {
@@ -117,17 +55,10 @@ public class Colaboradores {
             System.out.println("\nNenhum projeto cadastrado!\n");
             return;
         }
-        Projetos.ListarProjetos(ProjCadastrados);
-        var getInput = Integer.parseInt(input.nextLine());
-        System.out.printf("Projeto selecionado [%d]\n",getInput);
-
-        while(getInput > ProjCadastrados.size() || getInput <= 0){
-                System.out.println("Opção inválida!Tente novamente.");
-                getInput = Integer.parseInt(input.nextLine());
-            }
+        var getInput = Sistema.BuscarProjeto(ProjCadastrados);
 
         if(Projetos.Verificacao(colaborador,ProjCadastrados.get(getInput - 1).Titulo)){
-            System.out.println("Erro: você já está participando desse projeto!\n");
+            System.out.println("ERRO: você já está participando desse projeto!\n");
             return;
         }
 
@@ -141,44 +72,57 @@ public class Colaboradores {
                 return;
             }
             else{
-              System.out.println("De acordo com as regras do sistema: alunos de graduação não pode está em mais de dois projetos.");
+              System.out.println("De acordo com as regras do sistema alunos de graduação não pode está em mais de dois projetos.");
+              System.out.println("O cadastramento de alunos a projetos só é permitido quando o projeto está em elaboração.");
               return;
             }
         }
         else{
+            if(ProjCadastrados.get(getInput - 1).Status.equals("EM ELABORAÇÃO")){
             this.projetos.add(ProjCadastrados.get(getInput - 1));
             ProjCadastrados.get(getInput - 1).participantes.add(colaborador);
             System.out.println("Colaborador(a) associado ao projeto!");
+            }
+            else{
+                System.out.println("Aviso: a operação falhou pois esse projeto já está em andamento.");
+            }
         }
     }
 
-
-    public static void BuscarColaborador(ArrayList<Projetos> ProjCadastrados,ArrayList<Colaboradores> colaboradores)
+    public void ListarColaborador()
     {
-        System.out.println("\nDigite o email do colaborador\n");
-
-        var n = input.nextLine();
-
-        System.out.println("\nDigite o seu código secreto\n");
-
-        var SecretCode = Integer.parseInt(input.nextLine());
-
-        if(colaboradores.isEmpty()){
-            System.out.println("Ainda não há colaboradores cadastrados!");
+        System.out.println("\nDados do colaborador:\n");
+        System.out.printf("[NOME]  ->%s \n[TIPO]  ->[%s|%s]\n",this.nome,this.tipo,this.grau);
+       
+        if(this.projetos.isEmpty()){ 
+            System.out.printf("AVISO: No momento  ''%s'' não está participando de nenhum projeto.\n",this.nome);
             return;
         }
-
-        for(int i = 0;i < colaboradores.size();i++)
-        {
-            Integer code = colaboradores.get(i).getSecretCode();
-            String email = colaboradores.get(i).getEmail();
-            if(SecretCode == code && n.equals(email)) 
+        System.out.printf("\n %s está participando dos projetos abaixo:n\n",this.nome);
+        for(int i = 0; i < this.projetos.size();i++){
+            if(this.projetos.get(i).Status.equals("EM ELABORAÇÃO")){
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("\nProjetos em elaboração\n");
+            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$%.2f \n",
+            i + 1,this.projetos.get(i).Status,this.projetos.get(i).Titulo,this.projetos.get(i).DataInicio,
+            this.projetos.get(i).DataTermino,this.projetos.get(i).A_financiadora,this.projetos.get(i).Valor);
+            }
+            if(this.projetos.get(i).Status.equals("EM ANDAMENTO")){
+                System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("\nProjetos em andamento\n");
+                System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
+                i + 1,this.projetos.get(i).Status,this.projetos.get(i).Titulo,this.projetos.get(i).DataInicio,
+                this.projetos.get(i).DataTermino,this.projetos.get(i).A_financiadora,this.projetos.get(i).Valor);
+            }
+            if(this.projetos.get(i).Status.equals("CONCLUÍDO"))
             {
-                colaboradores.get(i).AddProjeto(ProjCadastrados,colaboradores.get(i));
-                return;
+                System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("\nProjetos concluídos\n");
+                System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
+                i + 1,this.projetos.get(i).Status,this.projetos.get(i).Titulo,this.projetos.get(i).DataInicio,
+                this.projetos.get(i).DataTermino,this.projetos.get(i).A_financiadora,this.projetos.get(i).Valor);
             }
         }
-        System.out.printf("O email ''%s'' não está cadastrado no sistema.\n",n);
     }
 
     public static void ListarColaboradores(ArrayList<Colaboradores> colaboradores)

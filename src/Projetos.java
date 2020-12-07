@@ -24,12 +24,23 @@ public class Projetos
         this.participantes = new ArrayList<Colaboradores>();
         this.producao = new ArrayList<ProducaoAcademica>();
     }
+
+    public String getDataInicio()
+    {
+        return this.DataInicio;
+    }
+
+    public String getDataTermino()
+    {
+        return this.DataTermino;
+    }
+
     public String getStatus()
     {
         return this.Status;
     }
 
-    public int getNumeroPartcipantes()
+    public int getNumeroParticipantes()
     {
         return this.participantes.size();
     }
@@ -51,78 +62,71 @@ public class Projetos
         return false;
     }
 
-    public static  void setStatus(ArrayList<Projetos> ProjetosCadastrados)
+    public void setStatus()
     {
-       int i,q_professor,q_aluno;
-       Projetos.ListarProjetos(ProjetosCadastrados);
-       var getResponse = input.nextInt(); 
-       System.out.printf("Opção selecionada [%d]\n",getResponse);
+       int i,q_professor,q_geral;
        System.out.println("\nAlterar status para:");
        System.out.println("[1] - Em andamento");
        System.out.println("[2] - Concluído\n");
-       var opcao = input.nextInt();
+       var opcao = Integer.parseInt(input.nextLine());
        /*Entrar na fase de desenvolvimento*/
       if(opcao == 1){
-      for(i = 0,q_professor = 0,q_aluno = 0;i < ProjetosCadastrados.get(getResponse - 1).participantes.size();i++)
+      for(i = 0,q_professor = 0,q_geral = 0;i < this.participantes.size();i++)
       {
-            if(ProjetosCadastrados.get(getResponse - 1).participantes.get(i).tipo.equals("PROFESSOR")) q_professor++;
-            else if(ProjetosCadastrados.get(getResponse - 1).participantes.get(i).tipo.equals("ALUNO"))q_aluno++;
+            if(this.participantes.get(i).tipo.equals("PROFESSOR")) q_professor++;
+            else if(this.participantes.get(i).tipo.equals("ALUNO") || this.participantes.get(i).tipo.equals("PARTICIPANTES"))q_geral++;
       }
 
-      if(q_professor >= 1 && q_aluno >= 1){
-          ProjetosCadastrados.get(getResponse - 1).Status = "EM ANDAMENTO";
+      if(q_professor >= 1 && q_geral >= 1){
+          this.Status = "EM ANDAMENTO";
           System.out.println("Status alterado para ''EM ANDAMENTO''.");
       }
       else{
-        System.out.println("Erro: não foi possível alterar status para ''EM ANDAMENTO''.");
+        System.out.println("ERRO: não foi possível alterar status para ''EM ANDAMENTO''.");
       }
       return;
      }
      /*Entrar na fase final*/
      else{
-        if(!ProjetosCadastrados.get(getResponse - 1).producao.isEmpty())
+        if(!this.producao.isEmpty())
         {
-            ProjetosCadastrados.get(getResponse - 1).Status = "CONCLUÍDO";
+            this.Status = "CONCLUÍDO";
             System.out.println("Status alterado para ''CONCLUÍDO''.");
         }
         else{
-            System.out.println("Erro: não foi possível alterar status para ''CONCLUÍDO''.");
+            System.out.println("ERRO: não foi possível alterar status para ''CONCLUÍDO''.");
         }
      }
       return;
     }
-    
 
-    public static void ListarProjetos(ArrayList<Projetos> projetos)
+    public void ListarProjeto()
     {
-        System.out.println("Selecione um projeto abaixo:\n");
-        for(int i = 0;i < projetos.size();i++)
-        {
-            System.out.println("Informações do projeto:");
-            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
-            i + 1,projetos.get(i).Status,projetos.get(i).Titulo,projetos.get(i).DataInicio,
-            projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor);
-            System.out.printf("[%d] - [DESCRIÇÃO]\n      %s\n[%d] - [OBJETIVO]  \n      %s \n",i + 1,projetos.get(i).Descricao,i+1,projetos.get(i).Objetivo);
+        System.out.println("\nInformações do projeto:\n");
+        System.out.printf("[STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
+        this.Status,this.Titulo,this.DataInicio,
+        this.DataTermino,this.A_financiadora,this.Valor);
+        System.out.printf("[DESCRIÇÃO]\n%s\n[OBJETIVO]\n%s\n",this.Descricao,this.Objetivo);
+
+        if(getNumeroParticipantes() == 0){
+            System.out.println("\nNão há colaboradores associados ao projeto.");
         }
-    }
 
-    public static Projetos CadastrarProjeto()
-    {
-        System.out.println("\nDigite o título:");
-        var Titulo = input.nextLine();
-        System.out.println("Digite a data de início: [dia/mês/ano]");
-        var DataInicio =  input.nextLine();
-        System.out.println("Digite a data de previsão de termino: [dia/mês/ano]");
-        var DataTermino = input.nextLine();
-        System.out.println("Digite o agente financiador:");
-        var A_financiadora = input.nextLine();
-        System.out.println("Digite o valor:");
-        var Valor = Double.parseDouble(input.nextLine());
-        System.out.println("Digite a descrição:");
-        var Descricao = input.nextLine();
-        System.out.println("Digite o objetivo:");
-        var Objetivo = input.nextLine();
-        Projetos Instance = new Projetos(Titulo,DataInicio,DataTermino,A_financiadora,Valor,Objetivo,Descricao,"EM ELABORAÇÃO");
-        return  Instance;
+        for(int i = 0; i < this.participantes.size();i++){
+            System.out.println("\nDados do colaborador:\n");
+            System.out.printf("[NOME]  ->%s \n[TIPO]  ->[%s|%s]\n",this.participantes.get(i).nome,this.participantes.get(i).tipo,this.participantes.get(i).grau);
+        }
+
+        if(getPublicacoes() == 0){
+            System.out.println("\nNão há publicações associadas ao projeto.");
+        }
+
+        for(int i = 0; i < this.producao.size();i++){
+            System.out.println("\nInformações sobre as publicações:\n");
+            System.out.printf("[TÍTULO] -> %s [CONFERÊNCIA] -> %s [LOCAL] -> %s [ANO] -> %s \n",this.producao.get(i).Titulo,
+            this.producao.get(i).NomeConferencia,this.producao.get(i).Local,this.producao.get(i).Ano);
+            System.out.printf("[PROJETO ASSOCIADO] -> %s \n",this.Titulo);
+        }
+
     }
 }

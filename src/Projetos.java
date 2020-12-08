@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+import javax.swing.plaf.metal.OceanTheme;
+
 
 public class Projetos implements Comparable<Projetos> {
+    
     public String Titulo, A_financiadora, Objetivo, Descricao, Status;
     public String DataInicio, DataTermino;
     public double Valor;
@@ -27,6 +30,11 @@ public class Projetos implements Comparable<Projetos> {
         this.Status = status;
         this.participantes = new ArrayList<Colaboradores>();
         this.producao = new ArrayList<ProducaoAcademica>();
+    }
+
+    public String getTitulo()
+    {
+        return this.Titulo;
     }
 
     public String getDataInicio() {
@@ -73,7 +81,6 @@ public class Projetos implements Comparable<Projetos> {
         try {
             return getDateTime().compareTo(projeto.getDateTime());
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return 0;
@@ -85,12 +92,17 @@ public class Projetos implements Comparable<Projetos> {
         System.out.println("[1] - Em andamento");
         System.out.println("[2] - Concluído\n");
         var opcao = Integer.parseInt(input.nextLine());
+        while(opcao > 2 || opcao <= 0)
+        {
+            System.out.println("Comando inválido!Tente novamente");
+            opcao = Integer.parseInt(input.nextLine());
+        }
         /* Entrar na fase de desenvolvimento */
         if (opcao == 1) {
             for (i = 0, q_professor = 0, q_geral = 0; i < this.participantes.size(); i++) {
                 if (this.participantes.get(i).tipo.equals("PROFESSOR"))
                     q_professor++;
-                else if (this.participantes.get(i).tipo.equals("ALUNO") || this.participantes.get(i).tipo.equals("PARTICIPANTES"))
+                else if (this.participantes.get(i).tipo.equals("ALUNO") || this.participantes.get(i).tipo.equals("PESQUISADOR"))
                     q_geral++;
             }
 
@@ -110,23 +122,49 @@ public class Projetos implements Comparable<Projetos> {
                 System.out.println("ERRO: não foi possível alterar status para ''CONCLUÍDO''.");
             }
         }
-        System.out.println("\nVocê deseja alterar o status de outro projeto?\nSelecione a opção:\n[1] - SIM\n[2] - NÃO");
-        var response = Integer.parseInt(input.nextLine());
-        while(response > 2 || response <= 0)
-        {
-            System.out.println("Comando inválido!Tente novamente");
-            response = Integer.parseInt(input.nextLine());
-        }
-         if(response == 1){
-            setStatus();
-         }
          return;
     }
 
+    public void ListarPublicacoes(String tipo)
+    {
+        ProducaoAcademica.Sort(this.producao);
+        for(int i = 0;i < this.producao.size();i++)
+        {   
+            if(this.producao.get(i).Tipo.equals(tipo)){
+
+            for(int j = 0;j < this.producao.get(i).Projetos.size();j++)
+            System.out.printf("\n[NOME DO PROJETO] %s\n",this.producao.get(i).getProjeto(j));
+
+            for(int j = 0;j < this.producao.get(i).Autores.size();j++)
+            System.out.printf("[NOME DO(S) AUTOR(ES)] %s\n",this.producao.get(i).getAutores(j));
+
+             System.out.printf("[TITULO] -> %s\n[NOME DA CONFERÊNCIA] -> %s\n[TIPO] -> %s \n[LOCAL] -> %s\n[ANO] -> %d\n\n",this.producao.get(i).getTitulo(),this.producao.get(i).getNome(),
+             this.producao.get(i).getTipo(),this.producao.get(i).getLocal(),this.producao.get(i).getAno());
+            }
+        }
+    }
+
+    public void ListarOrientacoes(String tipo)
+    {
+            for(int i = 0;i < this.producao.size();i++)
+            {   
+                if(this.producao.get(i).Tipo.equals(tipo)){
+                System.out.printf("\n[TITULO] -> %s\n[TIPO] -> %s\n[ANO] -> %s\n",this.producao.get(i).getTitulo(),this.producao.get(i).getTipo(),this.producao.get(i).getAno());
+
+                for(int j = 0;j < this.producao.get(i).Projetos.size();j++)
+                    System.out.printf("[NOME DO PROJETO] %s\n",this.producao.get(i).getProjeto(j));
+                
+                for(int j = 0;j < this.producao.get(i).Alunos.size();j++)
+                    System.out.printf("[NOME DO ALUNO]: %s\n",this.producao.get(i).getAluno(j));
+
+                }
+            }
+    }
+
     public void ListarProjeto() {
-        System.out.println("\nInformações do projeto:\n");
+        System.out.println("\nInformações do projeto adicionais:\n");
         System.out.printf(
-                "[STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
+                "[STATUS] -> ''%s'' [TÍTULO] -> %s [DATA DE INÍCIO] -> %s [DATA DE TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
                 this.Status, this.Titulo, this.DataInicio, this.DataTermino, this.A_financiadora, this.Valor);
         System.out.printf("[DESCRIÇÃO]\n%s\n[OBJETIVO]\n%s\n", this.Descricao, this.Objetivo);
 
@@ -139,17 +177,13 @@ public class Projetos implements Comparable<Projetos> {
             System.out.printf("[NOME]  ->%s \n[TIPO]  ->[%s|%s]\n", this.participantes.get(i).nome,
                     this.participantes.get(i).tipo, this.participantes.get(i).grau);
         }
-
-        if (getPublicacoes() == 0) {
-            System.out.println("\nNão há publicações associadas ao projeto.");
+        if(this.producao.size() == 0)
+        {
+            System.out.printf("AVISO: não há produções acadêmicas associadas ao projeto\n");
         }
-
-        for (int i = 0; i < this.producao.size(); i++) {
-            System.out.println("\nInformações sobre as publicações:\n");
-            System.out.printf("[TÍTULO] -> %s [CONFERÊNCIA] -> %s [LOCAL] -> %s [ANO] -> %s \n",
-                    this.producao.get(i).Titulo, this.producao.get(i).NomeConferencia, this.producao.get(i).Local,
-                    this.producao.get(i).Ano);
-            System.out.printf("[PROJETO ASSOCIADO] -> %s \n", this.Titulo);
+        else{
+        ListarPublicacoes("PUBLICAÇÃO");
+        ListarOrientacoes("ORIENTAÇÃO");
         }
 
     }

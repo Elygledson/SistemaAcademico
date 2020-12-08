@@ -1,18 +1,69 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Collections;
+import java.util.Date;
 
-public class ProducaoAcademica {
+public class ProducaoAcademica implements Comparable<ProducaoAcademica>{
 
     public String Titulo,NomeConferencia,Local,Tipo;
 
-    public int Ano;
+    public Integer Ano;
 
     public ArrayList<String> Autores = new ArrayList<String>();
     /*projetos associados as publlicações*/
+    public ArrayList<String> Projetos = new ArrayList<String>();
+    /*nomes dos alunos orientados*/
+    public ArrayList<String> Alunos = new ArrayList<String>();
+    /*texto publicaçõe*/
+    public ArrayList<String> publicacao =  new ArrayList<String>();
+     /*texto orientacao*/
+    public ArrayList<String> orientacao = new ArrayList<String>();
 
+    public String getAluno(int i)
+    {
+        if(this.Alunos.get(i) != null)
+            return this.Alunos.get(i);
 
-    static Scanner input = new Scanner(System.in);
+        return "Não há aluno(a) associado(a).";
+    }
 
+    public String getProjeto(int i)
+    {
+        if(this.Projetos.get(i) != null)
+            return this.Projetos.get(i);
+
+        return "Não há projeto associado.";
+    }
+
+    public String getAutores(int i)
+    {
+        if(this.Autores.get(i) != null)
+            return this.Autores.get(i);
+
+        return "Não há autor(es) associado(s).";
+    }
+
+    public static void Sort(ArrayList<ProducaoAcademica> producoes) {
+        Collections.sort(producoes);
+    }
+
+    public Date getDateTime() throws ParseException {
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy"); 
+        var ano = Integer.toString(this.Ano);
+        Date data = (Date) formato.parse(ano);
+        return data;
+    }
+
+    @Override
+    public int compareTo(ProducaoAcademica producao) {
+        try {
+            return getDateTime().compareTo(producao.getDateTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     public String getTitulo()
     {
@@ -20,7 +71,7 @@ public class ProducaoAcademica {
     }
     public String getTipo()
     {
-        return this.Tipo;
+        return (this.Tipo != null ) ? this.Tipo : "Não há produções";
     }
 
     public String getLocal()
@@ -33,7 +84,7 @@ public class ProducaoAcademica {
         return this.NomeConferencia;
     }
 
-    public int getAno()
+    public Integer getAno()
     {
         return this.Ano;
     }
@@ -63,22 +114,5 @@ public class ProducaoAcademica {
         this.Ano = ano;
     }
 
-    public void AdicionarAutores()
-    {
-        System.out.println("\nDigite os nome dos autores");
-
-        var autor = input.nextLine();
-
-        this.Autores.add(autor);
-        System.out.println("\nVoce gostaria de adicionar outro autor?\nSelecione a opção:\n[1] - SIM\n[2] - NÃO");
-        var response = Integer.parseInt(input.nextLine());
-        while(response > 2 || response <= 0)
-        {
-            System.out.println("Comando inválido!Tente novamente");
-            response = Integer.parseInt(input.nextLine());
-        }
-         if(response == 1){
-            AdicionarAutores();
-         }
-    }
 }
+

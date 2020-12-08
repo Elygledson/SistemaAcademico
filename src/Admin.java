@@ -15,16 +15,8 @@ public class Admin {
 
         ArrayList<Projetos> projetos = new ArrayList<Projetos>();
         while(flag){
-        System.out.println("\nSelecione uma opção:");
-        System.out.println("[1] - Cadastrar projeto.");
-        System.out.println("[2] - Cadastrar participante.");
-        System.out.println("[3] - Cadastrar produção academica");
-        System.out.println("[4] - Alocar participante a projeto.");
-        System.out.println("[5] - Alterar status de projeto");
-        System.out.println("[6] - Consultar projeto");
-        System.out.println("[7] - Consultar colaborador");
-        System.out.println("[8] - Listar projetos");
-        System.out.println("[9] - Sair.\n");
+        
+        Sistema.Painel();
 
         var comando = Integer.parseInt(input.nextLine());
 
@@ -44,7 +36,8 @@ public class Admin {
             case 3:
                 getResponse = Sistema.BuscarColaborador(colaboradores);
                 if(getResponse == -1)break;
-                colaboradores.get(getResponse).producao.add(Sistema.CadastrarProducao(colaboradores.get(getResponse).getNome()));
+                ProducaoAcademica novaIntancia = Sistema.CadastrarProducao(projetos,colaboradores.get(getResponse));
+                colaboradores.get(getResponse).producao.add(novaIntancia);
                 break;
             case 4:
                  index = Sistema.BuscarColaborador(colaboradores);
@@ -68,7 +61,11 @@ public class Admin {
                 break;
             case 8:
                 Sistema.ListarProjetos(projetos);
+                break;
             case 9:
+                 Sistema.FornecerRelatorio(projetos,colaboradores.size());
+                 break;
+            case 10:
                 flag = false;
                 break;
             default:

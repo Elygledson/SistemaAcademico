@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /*Classe Sistema: Criação e armazenamento de dados temporariamente*/
 
-public class Sistema {
+public class Sistema{
     
     static Scanner input = new Scanner(System.in);
 
@@ -66,16 +66,14 @@ public class Sistema {
             return -1;
         }
 
-        System.out.println("Selecione um projeto abaixo:\n");
         for(int i = 0;i < projetos.size();i++)
         {
             System.out.println("\nInformações do projeto:\n");
-            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$ %.2f \n",
+            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA DE INÍCIO] -> %s [DATA DE TERMINO] -> %s\n",
             i + 1,projetos.get(i).Status,projetos.get(i).Titulo,projetos.get(i).DataInicio,
-            projetos.get(i).DataTermino,projetos.get(i).A_financiadora,projetos.get(i).Valor);
-            System.out.printf("[%d] - [DESCRIÇÃO]\n      %s\n[%d] - [OBJETIVO]  \n      %s \n",i + 1,projetos.get(i).Descricao,i + 1,projetos.get(i).Objetivo);
+            projetos.get(i).DataTermino);
         }
-        
+        System.out.println("Selecione um projeto acima:\n");
         var getResponse = Integer.parseInt(input.nextLine());
         while(getResponse > projetos.size() || getResponse <= 0)
         {
@@ -94,44 +92,142 @@ public class Sistema {
         if(colaboradores.get(getResponse).tipo == "PROFESSOR"){
             return BuscarProjeto(projetos);
         }else{
-            System.out.println("*Permissão: somente professores pode fazem esse tipo de operação");
-            System.out.println("Erro: Acesso negado!");
+            System.out.println("*PERMISSÃO: somente professores pode fazem esse tipo de operação");
+            System.out.println("ERRO: Acesso negado!");
             return -1;
         }
     }
 
-    static ProducaoAcademica CadastrarProducao(String NomedoColaborador)
+    static boolean AnaliseGeral(Colaboradores colaborador,String NomeProjeto)
     {
-        System.out.printf("Olá %s,preencha as informações abaixo:\n",NomedoColaborador);
-        System.out.println("Digite o tipo de produção acadêmica:");
-        var tipo = input.nextLine();
+        for(int i = 0; i < colaborador.projetos.size();i++)
+        {
+           String status = colaborador.projetos.get(i).getStatus();
+            if(NomeProjeto.equalsIgnoreCase(colaborador.projetos.get(i).getTitulo()) && status.equals("EM ANDAMENTO")){
+                return true;
+            }
+        }
+        System.out.println("ERRO: O(A) colaborador(a) não está participando desse projeto ou o projeto está em fase de elaboração.");
+        return false;
+    }
+
+    /*Associar producao ao projeto*/
+    public static void setProducao(ArrayList<Projetos> projetos,String NomeProjeto,ProducaoAcademica novaInstancia)
+    {
+        int posicao = 0;
+        for(int i = 0;i < projetos.size();i++)
+        {
+            if(projetos.get(i).Titulo.equals(NomeProjeto))
+            {
+                posicao = i;
+                break;
+            }
+        }
+            projetos.get(posicao).producao.add(novaInstancia);
+    }
+
+    static void FornecerRelatorio(ArrayList<Projetos> projetos,int NumeroColaboradores)
+    {   
+        int NumeroProjetos,elaboracao,andamento,concluidos,publicacoes,orientacoes;
+        NumeroProjetos = elaboracao = andamento = concluidos = publicacoes = orientacoes = 0; 
+        String status,tipo;
+        for(int i = 0;i < projetos.size();i++)
+        {
+            status = projetos.get(i).getStatus();
+            for(int j = 0;j < projetos.get(i).producao.size();j++)
+            {
+                tipo = projetos.get(i).producao.get(j).getTipo();
+                if(tipo.equals("PUBLICAÇÃO")){
+                    publicacoes++;
+                }
+                else{
+                orientacoes++;
+                }
+            }
+
+            if(status.equals("EM ELABORAÇÃO"))elaboracao++;
+
+            if(status.equals("EM ANDAMENTO"))andamento++;
+
+            if(status.equals("CONCLUIDOS"))concluidos++;
+
+        }
+        NumeroProjetos = projetos.size();
+        System.out.println("\nInformações gerais:");
+        System.out.println("Numero de colaboradores presentes no sistema: " + NumeroColaboradores);
+        System.out.println("Total de projetos em elaboração: " + elaboracao);
+        System.out.println("Total de projetos em andamento:" + andamento);
+        System.out.println("Total de projetos concluídos:" + concluidos);
+        System.out.println("Numero total de projetos: " + NumeroProjetos);
+        System.out.println("Numero total de publicações: " + publicacoes);
+        System.out.println("Numero total de orientações: " + orientacoes);
+    }
+
+    static ProducaoAcademica CadastrarProducao(ArrayList<Projetos> projetos,Colaboradores colaborador)
+    {
+        System.out.printf("Olá %s,preencha as informações abaixo:\n",colaborador.getNome());
+        System.out.println("Selecione o tipo de produção acadêmica:\n[1] - Publicação\n[2] - Orientação");
+        var tipo = Integer.parseInt(input.nextLine());
+        System.out.printf("Opção selecionada [%d]\n",tipo);
         System.out.println("Digite um título para sua publicação:");
         var titulo = input.nextLine();
         
-        if(tipo.equalsIgnoreCase("PUBLICACAO"))
+        if(tipo == 1)
         {
             System.out.println("Digite o nome da conferência:");
             var conferencia = input.nextLine();
-            System.out.println("Digite o ano de publicação:");
+            System.out.println("Digite o ano de publicação: Ex: yyyy");
             var ano = Integer.parseInt(input.nextLine());
             System.out.println("Digite onde foi publicado:");
             var local = input.nextLine();
+            System.out.println("Digite o nome do projeto a ser associado");
+            var NomeProjeto = input.nextLine();
+
             Publicacao novaPublicacao = new Publicacao();
+
+            if(!novaPublicacao.setGeral(colaborador,NomeProjeto))return null;
+
+            novaPublicacao.setAutores();
+
             novaPublicacao.setTitulo(titulo);
+
             novaPublicacao.setAno(ano);
+
             novaPublicacao.setNome(conferencia);
-            novaPublicacao.setTipo(tipo);
+
+            novaPublicacao.setTipo("PUBLICAÇÃO");
+
             novaPublicacao.setLocal(local);
+
+            Sistema.setProducao(projetos , NomeProjeto , novaPublicacao);
+
             return novaPublicacao;
         }
-        else
+        else if(tipo == 2)
         {
-            Orientacoes novaOrientacao = new Orientacoes();
-            novaOrientacao.setTitulo(titulo);
-            novaOrientacao.setTipo(tipo);
-            return novaOrientacao;
-        }
+            if(colaborador.tipo.equals("PROFESSOR")){
 
+                System.out.println("Digite o nome do projeto a ser associado");
+
+                var NomeProjeto = input.nextLine();
+
+                Orientacoes novaOrientacao = new Orientacoes();
+
+                if(!novaOrientacao.setGeral(colaborador, NomeProjeto))return null;
+
+                novaOrientacao.setTitulo(titulo);
+
+                novaOrientacao.setTipo("ORIENTAÇÃO");
+
+                Sistema.setProducao(projetos , NomeProjeto , novaOrientacao);
+
+                return novaOrientacao;
+            }
+            else{
+                System.out.println("Permissão: somente professores podem criar orientações!!");
+            }
+        }
+        return null;
     }
 
     public static Colaboradores AdicionarColaborador(ArrayList<Colaboradores> colaboradores)
@@ -200,9 +296,9 @@ public class Sistema {
     {
         System.out.println("\nDigite o título:");
         var Titulo = input.nextLine();
-        System.out.println("Digite a data de início: [dd/MM/yyyy]");
+        System.out.println("Digite a data de início: dd/MM/yyyy");
         var DataInicio =  input.nextLine();
-        System.out.println("Digite a data de previsão de termino: [dd/MM/yyyy]");
+        System.out.println("Digite a data de previsão de termino: dd/MM/yyyy");
         var DataTermino = input.nextLine();
         System.out.println("Digite o agente financiador:");
         var A_financiadora = input.nextLine();
@@ -215,4 +311,21 @@ public class Sistema {
         Projetos Instance = new Projetos(Titulo,DataInicio,DataTermino,A_financiadora,Valor,Objetivo,Descricao,"EM ELABORAÇÃO");
         return  Instance;
     }
+
+
+
+    public static void Painel() 
+    {
+        System.out.println("\nSelecione uma opção:");
+        System.out.println("[1] - Cadastrar projeto.");
+        System.out.println("[2] - Cadastrar participante.");
+        System.out.println("[3] - Cadastrar produção academica");
+        System.out.println("[4] - Alocar participante a projeto.");
+        System.out.println("[5] - Alterar status de projeto");
+        System.out.println("[6] - Consultar projeto");
+        System.out.println("[7] - Consultar colaborador");
+        System.out.println("[8] - Listar projetos");
+        System.out.println("[9] - Relatório Acadêmico.");
+        System.out.println("[10]- Sair\n");
+	}
 }

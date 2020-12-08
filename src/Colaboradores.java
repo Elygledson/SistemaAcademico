@@ -77,7 +77,7 @@ public class Colaboradores{
                 System.out.println("Aviso: a operação falhou pois esse projeto já está em andamento.");
             }
         }
-        System.out.println("\nVocê deseja inserir o colaborador(a) em mais algum projeto?\nSelecione a opção:\n[1] - SIM\n[2] - NÃO");
+        System.out.println("\nVocê deseja inserir o(a) colaborador(a) em mais algum projeto?\nSelecione a opção:\n[1] - SIM\n[2] - NÃO");
         var response = Integer.parseInt(input.nextLine());
         while(response > 2 || response <= 0)
         {
@@ -92,23 +92,50 @@ public class Colaboradores{
 
     }
 
-    public void ListarPorTipo(String tipo)
+    public void ListarPublicacoes(String tipo)
     {
+        ProducaoAcademica.Sort(this.producao);
         for(int i = 0;i < this.producao.size();i++)
         {   
-            if(this.producao.get(i).Tipo.equals(tipo))
-             System.out.printf("[TITULO] -> %s [NOME DA CONFERÊNCIA] -> %s [TIPO] -> %s [LOCAL] -> %s [ANO]\n",this.producao.get(i).getTitulo(),this.producao.get(i).getNome(),
+            if(this.producao.get(i).Tipo.equals(tipo)){
+
+            for(int j = 0;j < this.producao.get(i).Projetos.size();j++)
+            System.out.printf("[NOME DO PROJETO] %s\n",this.producao.get(i).getProjeto(j));
+
+            for(int j = 0;j < this.producao.get(i).Autores.size();j++)
+            System.out.printf("[NOME DO(S) AUTOR(ES)] %s\n",this.producao.get(i).getAutores(j));
+
+             System.out.printf("[TITULO] -> %s\n[NOME DA CONFERÊNCIA] -> %s\n[TIPO] -> %s \n[LOCAL] -> %s\n[ANO] -> %d\n\n",this.producao.get(i).getTitulo(),this.producao.get(i).getNome(),
              this.producao.get(i).getTipo(),this.producao.get(i).getLocal(),this.producao.get(i).getAno());
+            }
         }
+    }
+
+    public void ListarOrientacoes(String tipo)
+    {
+            for(int i = 0;i < this.producao.size();i++)
+            {   
+                if(this.producao.get(i).Tipo.equals(tipo)){
+                 System.out.printf("\n[TITULO] -> %s\n[TIPO] -> %s\n[ANO] -> %s\n",this.producao.get(i).getTitulo(),this.producao.get(i).getTipo(),this.producao.get(i).getAno());
+
+                 for(int j = 0;j < this.producao.get(i).Projetos.size();j++)
+                     System.out.printf("[NOME DO PROJETO] %s\n",this.producao.get(i).getProjeto(j));
+                
+                 for(int j = 0;j < this.producao.get(i).Alunos.size();j++)
+                    System.out.printf("[NOME DO ALUNO]: %s\n",this.producao.get(i).getAluno(j));
+
+                }
+            }
     }
 
     public void ListarPorStatus(String status)
     {
+        Projetos.Sort(this.projetos);
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("\nProjeto(s) %s\n\n",status.toLowerCase());
         for(int i = 0; i < this.projetos.size();i++){
             if(this.projetos.get(i).Status.equals(status)){
-            System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("\nProjeto em elaboração\n");
-            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA INÍCIO] -> %s [DATA TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$%.2f \n",
+            System.out.printf("[OPÇÃO]\n[%d] - [STATUS] -> ''%s'' [TÍTULO] -> %s [DATA DE INÍCIO] -> %s [DATA DE TERMINO] -> %s [FINANCIADORA] -> %s [VALOR] -> R$%.2f \n",
             i + 1,this.projetos.get(i).Status,this.projetos.get(i).Titulo,this.projetos.get(i).DataInicio,
             this.projetos.get(i).DataTermino,this.projetos.get(i).A_financiadora,this.projetos.get(i).Valor);
             }
@@ -122,19 +149,21 @@ public class Colaboradores{
        
         if(this.projetos.isEmpty()){ 
             System.out.printf("AVISO: No momento  ''%s'' não está participando de nenhum projeto.\n",this.nome);
+        }else{
+            System.out.printf("\n %s está participando dos projetos abaixo:\n",this.nome);
+            ListarPorStatus("EM ELABORAÇÃO");
+            ListarPorStatus("EM ANDAMENTO");
+            ListarPorStatus("CONCLUÍDOS");
         }
-
-        System.out.printf("\n %s está participando dos projetos abaixo:\n",this.nome);
-        ListarPorStatus("EM ELABORAÇÃO");
-        ListarPorStatus("EM ANDAMENTO");
-        ListarPorStatus("CONCLUÍDOS");
-        System.out.printf("\n %s publicou:\n",this.nome);
-        if(this.producao.isEmpty())
+        System.out.printf("\n%s publicou:\n",this.nome);
+        if(this.producao.size() == 0)
         {
             System.out.printf("AVISO: ''%s'' não possui produções acadêmicas\n",this.nome);
         }
-        ListarPorTipo("PUBLICAÇÃO");
-
+        else{
+        ListarPublicacoes("PUBLICAÇÃO");
+        ListarOrientacoes("ORIENTAÇÃO");
+        }
         
     }
 

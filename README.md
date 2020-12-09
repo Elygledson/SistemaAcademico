@@ -7,8 +7,8 @@ as informações do sistema.
 
 ## Instruções:
 
-1. - Clone o repositório;
-2. - Execute o arquivo Admin.java que está contido na pasta main;
+1. * Clone o projeto https://github.com/Elygledson/SistemaAcademico;
+2. * Execute o arquivo Admin.java que está contido na pasta main;
 
 * Pacote de extensão utilizada no vscode "Java extension pack".
 

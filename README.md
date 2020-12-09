@@ -1,14 +1,15 @@
-## Getting Started
+## Sistema de Gestão de Produtividade Acadêmica
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+O sistema de gestão de produtividade acadêmica objetiva o gerenciamento da produção
+acadêmica de um laboratório de pesquisa, incluindo informações sobre projetos de pesquisa e
+colaboradores. O administrador do sistema é o usuário responsável pela manutenção de todas
+as informações do sistema. 
 
-## Folder Structure
+Instruções:
 
-The workspace contains two folders by default, where:
+1 - Clone o projeto;
+2 - Execute o arquivo Admin.java que está contido na pasta main;
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+Pacote de extensão utilizada no vscode "Java extension pack".
 
-## Dependency Management
 
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
